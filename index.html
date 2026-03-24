@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JY Dashboard</title>
+    <style>
+        /* === RESET & BASE === */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0f1117;
+            --bg-secondary: #1a1d2e;
+            --bg-card: #1e2235;
+            --bg-card-hover: #252a42;
+            --accent: #6c63ff;
+            --accent-light: #8b83ff;
+            --accent-glow: rgba(108, 99, 255, 0.15);
+            --green: #00c896;
+            --green-bg: rgba(0, 200, 150, 0.1);
+            --red: #ff4d6a;
+            --red-bg: rgba(255, 77, 106, 0.1);
+            --yellow: #ffc107;
+            --text-primary: #e8e9f3;
+            --text-secondary: #8b8fa3;
+            --text-muted: #5c6078;
+            --border: #2a2e45;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        a { color: var(--accent-light); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: #fff; }
+
+        /* === LAYOUT === */
+        .app { display: flex; min-height: 100vh; }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 28px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar-logo .dot {
+            width: 10px; height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
+        }
+        .sidebar-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 32px; }
+
+        .nav-section { margin-bottom: 24px; }
+        .nav-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            padding-left: 12px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: var(--accent-glow);
+            color: #fff;
+        }
+        .nav-item.active { border-left: 3px solid var(--accent); }
+        .nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+
+        /* --- Main Content --- */
+        .main {
+            flex: 1;
+            margin-left: 260px;
+            padding: 32px 40px;
+        }
+
+        /* --- Header --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        .header h1 { font-size: 1.6rem; font-weight: 700; }
+        .header-date { color: var(--text-muted); font-size: 0.85rem; }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+        /* --- Stats Row --- */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            transition: all 0.25s;
+        }
+        .stat-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; }
+        .stat-change { font-size: 0.8rem; margin-top: 6px; }
+        .stat-change.up { color: var(--green); }
+        .stat-change.down { color: var(--red); }
+
+        /* --- Section --- */
+        .section {
+            margin-bottom: 36px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .section-title { font-size: 1.15rem; font-weight: 600; }
+        .section-link { font-size: 0.8rem; color: var(--accent-light); }
+
+        /* --- Portfolio Table --- */
+        .table-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            padding: 14px 20px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 14px 20px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--bg-card-hover); }
+        .ticker { font-weight: 700; color: #fff; }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-green { background: var(--green-bg); color: var(--green); }
+        .badge-red { background: var(--red-bg); color: var(--red); }
+
+        /* --- Video Cards --- */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 18px;
+        }
+        .video-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.25s;
+            cursor: pointer;
+        }
+        .video-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--accent);
+        }
+        .video-thumb {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #1a1d2e 0%, #2a2e45 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .play-icon {
+            width: 56px; height: 56px;
+            background: rgba(108,99,255,0.85);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #fff;
+            backdrop-filter: blur(4px);
+        }
+        .video-thumb .channel-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 12px;
+            background: rgba(0,0,0,0.7);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+        .video-body { padding: 18px; }
+        .video-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; color: #fff; }
+        .video-meta { font-size: 0.78rem; color: var(--text-muted); display: flex; gap: 14px; }
+        .video-tag {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 3px 10px;
+            background: var(--accent-glow);
+            color: var(--accent-light);
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        /* --- Mobile --- */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 16px; left: 16px;
+            z-index: 200;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: #fff;
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; padding: 24px 16px; padding-top: 64px; }
+            .menu-toggle { display: flex; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .video-grid { grid-template-columns: 1fr; }
+        }
+
+        /* --- Edit Modal --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            width: 90%;
+            max-width: 520px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal h2 { font-size: 1.2rem; margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent);
+        }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-ghost:hover { color: #fff; border-color: var(--text-secondary); }
+        .btn-danger { background: var(--red); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; }
+        .btn-danger:hover { opacity: 0.85; }
+
+        /* --- Animations --- */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeUp 0.4s ease forwards; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
+        .delay-3 { animation-delay: 0.15s; }
+        .delay-4 { animation-delay: 0.2s; }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-muted);
+        }
+        .empty-state .icon { font-size: 2.4rem; margin-bottom: 12px; }
+        .empty-state p { font-size: 0.9rem; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
+
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo"><span class="dot"></span> JY Dashboard</div>
+            <div class="sidebar-sub">AI-Powered Investing</div>
+
+            <nav>
+                <div class="nav-section">
+                    <div class="nav-label">Main</div>
+                    <div class="nav-item active" onclick="showSection('overview')">
+                        <span class="nav-icon">&#9673;</span> Overview
+                    </div>
+                    <div class="nav-item" onclick="showSection('portfolio')">
+                        <span class="nav-icon">&#9733;</span> Portfolio
+                    </div>
+                    <div class="nav-item" onclick="showSection('videos')">
+                        <span class="nav-icon">&#9654;</span> Video Summaries
+                    </div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-label">Tools</div>
+                    <div class="nav-item" onclick="showSection('watchlist')">
+                        <span class="nav-icon">&#9673;</span> Watchlist
+                    </div>
+                    <div class="nav-item" onclick="openSettings()">
+                        <span class="nav-icon">&#9881;</span> Settings
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="main">
+            <div class="header">
+                <div>
+                    <h1 id="page-title">Overview</h1>
+                    <div class="header-date" id="current-date"></div>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" onclick="openAddModal()">+ Add Item</button>
+                </div>
+            </div>
+
+            <!-- OVERVIEW SECTION -->
+            <div id="section-overview">
+                <div class="stats-row" id="stats-row">
+                    <!-- Stats populated by JS -->
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">Stock Portfolio</div>
+                        <a href="#" class="section-link" onclick="showSection('portfolio'); return false;">View All &rarr;</a>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Ticker</th><th>Shares</th><th>Avg Cost</th><th>Current</th><th>P/L</th><th></th></tr>
+                            </thead>
+                            <tbody id="portfolio-table-overview"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">Recent Video Summaries</div>
+                        <a href="#" class="section-link" onclick="showSection('videos'); return false;">View All &rarr;</a>
+                    </div>
+                    <div class="video-grid" id="video-grid-overview"></div>
+                </div>
+            </div>
+
+            <!-- PORTFOLIO SECTION -->
+            <div id="section-portfolio" style="display:none;">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">All Positions</div>
+                        <button class="btn btn-primary" onclick="openAddModal('stock')">+ Add Stock</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Ticker</th><th>Shares</th><th>Avg Cost</th><th>Current Price</th><th>P/L</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="portfolio-table-full"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEOS SECTION -->
+            <div id="section-videos" style="display:none;">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">All Video Summaries</div>
+                        <button class="btn btn-primary" onclick="openAddModal('video')">+ Add Video</button>
+                    </div>
+                    <div class="video-grid" id="video-grid-full"></div>
+                    <div class="empty-state" id="videos-empty" style="display:none;">
+                        <div class="icon">&#9654;</div>
+                        <p>No video summaries yet. Add your first one!</p>
+                        <button class="btn btn-primary" onclick="openAddModal('video')">+ Add Video</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WATCHLIST SECTION -->
+            <div id="section-watchlist" style="display:none;">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">Watchlist</div>
+                        <button class="btn btn-primary" onclick="openAddModal('watchlist')">+ Add Ticker</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Ticker</th><th>Price</th><th>Target</th><th>Notes</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="watchlist-table"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="watchlist-empty" style="display:none;">
+                        <div class="icon">&#9673;</div>
+                        <p>Your watchlist is empty. Start tracking stocks!</p>
+                        <button class="btn btn-primary" onclick="openAddModal('watchlist')">+ Add Ticker</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ADD / EDIT MODAL -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+        <div class="modal" id="modal" onclick="event.stopPropagation()">
+            <h2 id="modal-title">Add Item</h2>
+            <form id="modal-form" onsubmit="handleFormSubmit(event)">
+                <div id="modal-fields"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="modal-submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // ========== DATA STORE (edit these or add via the UI) ==========
+    let DATA = {
+        portfolio: [
+            { ticker: "AAPL", shares: 15, avgCost: 178.50, currentPrice: 195.20 },
+            { ticker: "NVDA", shares: 10, avgCost: 480.00, currentPrice: 920.50 },
+            { ticker: "MSFT", shares: 8, avgCost: 370.25, currentPrice: 415.80 },
+            { ticker: "TSLA", shares: 12, avgCost: 245.00, currentPrice: 178.30 },
+            { ticker: "AMZN", shares: 20, avgCost: 155.00, currentPrice: 186.40 },
+        ],
+        videos: [
+            {
+                title: "NVDA Earnings Deep Dive - Why It's Still Undervalued",
+                channel: "Orlando Kim",
+                date: "2026-03-20",
+                url: "#",
+                tags: ["NVDA", "Earnings"],
+            },
+            {
+                title: "Top 5 AI Stocks to Buy in March 2026",
+                channel: "MiJuEun",
+                date: "2026-03-18",
+                url: "#",
+                tags: ["AI", "Growth"],
+            },
+            {
+                title: "Tesla Robotaxi Update - Full Analysis",
+                channel: "SesangHakGaeRon",
+                date: "2026-03-15",
+                url: "#",
+                tags: ["TSLA", "Robotaxi"],
+            },
+        ],
+        watchlist: [
+            { ticker: "PLTR", price: 78.50, target: 95.00, notes: "Watching for pullback to $70" },
+            { ticker: "SMCI", price: 42.30, target: 60.00, notes: "Earnings March 28" },
+            { ticker: "MSTR", price: 310.00, target: 400.00, notes: "BTC correlation play" },
+        ],
+    };
+
+    // ========== UTILITY ==========
+    function formatCurrency(n) { return "$" + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    function formatPL(cost, current, shares) {
+        const pl = (current - cost) * shares;
+        const pct = ((current - cost) / cost * 100).toFixed(1);
+        const sign = pl >= 0 ? "+" : "";
+        return { text: sign + formatCurrency(pl) + " (" + sign + pct + "%)", isUp: pl >= 0 };
+    }
+
+    // ========== RENDER ==========
+    function renderStats() {
+        const totalValue = DATA.portfolio.reduce((s, p) => s + p.currentPrice * p.shares, 0);
+        const totalCost = DATA.portfolio.reduce((s, p) => s + p.avgCost * p.shares, 0);
+        const totalPL = totalValue - totalCost;
+        const plPct = ((totalPL / totalCost) * 100).toFixed(1);
+        const stats = [
+            { label: "Portfolio Value", value: formatCurrency(totalValue), change: (totalPL >= 0 ? "+" : "") + formatCurrency(totalPL), up: totalPL >= 0 },
+            { label: "Total P/L", value: (totalPL >= 0 ? "+" : "") + plPct + "%", change: DATA.portfolio.length + " positions", up: totalPL >= 0 },
+            { label: "Video Summaries", value: DATA.videos.length, change: "Total analyzed", up: true },
+            { label: "Watchlist", value: DATA.watchlist.length, change: "Tickers tracked", up: true },
+        ];
+        document.getElementById("stats-row").innerHTML = stats.map((s, i) => `
+            <div class="stat-card animate-in delay-${i+1}">
+                <div class="stat-label">${s.label}</div>
+                <div class="stat-value">${s.value}</div>
+                <div class="stat-change ${s.up ? 'up' : 'down'}">${s.change}</div>
+            </div>
+        `).join("");
+    }
+
+    function renderPortfolioRow(p, i) {
+        const pl = formatPL(p.avgCost, p.currentPrice, p.shares);
+        return `<tr>
+            <td class="ticker">${p.ticker}</td>
+            <td>${p.shares}</td>
+            <td>${formatCurrency(p.avgCost)}</td>
+            <td>${formatCurrency(p.currentPrice)}</td>
+            <td><span class="badge ${pl.isUp ? 'badge-green' : 'badge-red'}">${pl.text}</span></td>
+            <td>
+                <button class="btn-ghost" style="padding:4px 10px;font-size:0.75rem;" onclick="editStock(${i})">Edit</button>
+                <button class="btn-danger" onclick="deleteItem('portfolio',${i})">Del</button>
+            </td>
+        </tr>`;
+    }
+
+    function renderPortfolio() {
+        const overviewRows = DATA.portfolio.slice(0, 5).map((p, i) => renderPortfolioRow(p, i)).join("");
+        const fullRows = DATA.portfolio.map((p, i) => renderPortfolioRow(p, i)).join("");
+        document.getElementById("portfolio-table-overview").innerHTML = overviewRows;
+        document.getElementById("portfolio-table-full").innerHTML = fullRows;
+    }
+
+    function renderVideoCard(v, i) {
+        return `<div class="video-card" onclick="if('${v.url}'!=='#') window.open('${v.url}','_blank')">
+            <div class="video-thumb">
+                <div class="play-icon">&#9654;</div>
+                <div class="channel-badge">${v.channel}</div>
+            </div>
+            <div class="video-body">
+                <div class="video-title">${v.title}</div>
+                <div class="video-meta">
+                    <span>${v.date}</span>
+                </div>
+                ${v.tags.map(t => `<span class="video-tag">${t}</span> `).join("")}
+                <div style="margin-top:10px;">
+                    <button class="btn-ghost" style="padding:3px 10px;font-size:0.72rem;" onclick="event.stopPropagation(); editVideo(${i})">Edit</button>
+                    <button class="btn-danger" style="font-size:0.7rem;" onclick="event.stopPropagation(); deleteItem('videos',${i})">Del</button>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function renderVideos() {
+        const overviewCards = DATA.videos.slice(0, 3).map((v, i) => renderVideoCard(v, i)).join("");
+        const fullCards = DATA.videos.map((v, i) => renderVideoCard(v, i)).join("");
+        document.getElementById("video-grid-overview").innerHTML = overviewCards;
+        document.getElementById("video-grid-full").innerHTML = fullCards;
+        document.getElementById("videos-empty").style.display = DATA.videos.length === 0 ? "block" : "none";
+    }
+
+    function renderWatchlist() {
+        const rows = DATA.watchlist.map((w, i) => `<tr>
+            <td class="ticker">${w.ticker}</td>
+            <td>${formatCurrency(w.price)}</td>
+            <td>${formatCurrency(w.target)}</td>
+            <td style="color:var(--text-secondary);font-size:0.85rem;">${w.notes}</td>
+            <td>
+                <button class="btn-ghost" style="padding:4px 10px;font-size:0.75rem;" onclick="editWatchlist(${i})">Edit</button>
+                <button class="btn-danger" onclick="deleteItem('watchlist',${i})">Del</button>
+            </td>
+        </tr>`).join("");
+        document.getElementById("watchlist-table").innerHTML = rows;
+        document.getElementById("watchlist-empty").style.display = DATA.watchlist.length === 0 ? "block" : "none";
+    }
+
+    function renderAll() {
+        renderStats();
+        renderPortfolio();
+        renderVideos();
+        renderWatchlist();
+    }
+
+    // ========== NAVIGATION ==========
+    function showSection(name) {
+        ["overview", "portfolio", "videos", "watchlist"].forEach(s => {
+            document.getElementById("section-" + s).style.display = s === name ? "block" : "none";
+        });
+        document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+        event && event.target && event.target.closest(".nav-item")?.classList.add("active");
+        const titles = { overview: "Overview", portfolio: "Stock Portfolio", videos: "Video Summaries", watchlist: "Watchlist" };
+        document.getElementById("page-title").textContent = titles[name] || "Overview";
+        if (window.innerWidth < 769) document.getElementById("sidebar").classList.remove("open");
+    }
+
+    function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+    }
+
+    // ========== MODAL / FORMS ==========
+    let currentModalType = null;
+    let currentEditIndex = null;
+
+    function openAddModal(type) {
+        currentModalType = type || "stock";
+        currentEditIndex = null;
+        document.getElementById("modal-title").textContent = "Add " + (currentModalType === "stock" ? "Stock" : currentModalType === "video" ? "Video Summary" : "Watchlist Item");
+        renderModalFields();
+        document.getElementById("modal-overlay").classList.add("active");
+    }
+
+    function openSettings() {
+        currentModalType = "settings";
+        document.getElementById("modal-title").textContent = "Dashboard Settings";
+        document.getElementById("modal-fields").innerHTML = `
+            <div class="form-group"><label>Dashboard Title</label><input name="dashTitle" value="JY Dashboard"></div>
+            <p style="color:var(--text-muted);font-size:0.82rem;margin-top:8px;">Edit the data directly in the index.html DATA object, or use the UI buttons to add/edit items. Your changes will appear immediately.</p>
+        `;
+        document.getElementById("modal-overlay").classList.add("active");
+    }
+
+    function renderModalFields(data) {
+        const d = data || {};
+        let html = "";
+        if (currentModalType === "stock") {
+            html = `
+                <div class="form-group"><label>Ticker Symbol</label><input name="ticker" value="${d.ticker||""}" required placeholder="e.g. AAPL"></div>
+                <div class="form-group"><label>Shares</label><input name="shares" type="number" step="any" value="${d.shares||""}" required></div>
+                <div class="form-group"><label>Avg Cost ($)</label><input name="avgCost" type="number" step="0.01" value="${d.avgCost||""}" required></div>
+                <div class="form-group"><label>Current Price ($)</label><input name="currentPrice" type="number" step="0.01" value="${d.currentPrice||""}" required></div>
+            `;
+        } else if (currentModalType === "video") {
+            html = `
+                <div class="form-group"><label>Video Title</label><input name="title" value="${d.title||""}" required></div>
+                <div class="form-group"><label>Channel</label><input name="channel" value="${d.channel||""}" required></div>
+                <div class="form-group"><label>Date</label><input name="date" type="date" value="${d.date||new Date().toISOString().split('T')[0]}" required></div>
+                <div class="form-group"><label>URL (to summary PDF or video)</label><input name="url" value="${d.url||"#"}" placeholder="https://..."></div>
+                <div class="form-group"><label>Tags (comma separated)</label><input name="tags" value="${(d.tags||[]).join(', ')}" placeholder="NVDA, Earnings"></div>
+            `;
+        } else if (currentModalType === "watchlist") {
+            html = `
+                <div class="form-group"><label>Ticker Symbol</label><input name="ticker" value="${d.ticker||""}" required placeholder="e.g. PLTR"></div>
+                <div class="form-group"><label>Current Price ($)</label><input name="price" type="number" step="0.01" value="${d.price||""}" required></div>
+                <div class="form-group"><label>Target Price ($)</label><input name="target" type="number" step="0.01" value="${d.target||""}" required></div>
+                <div class="form-group"><label>Notes</label><input name="notes" value="${d.notes||""}"></div>
+            `;
+        }
+        document.getElementById("modal-fields").innerHTML = html;
+    }
+
+    function closeModal(e) {
+        if (e && e.target !== document.getElementById("modal-overlay")) return;
+        document.getElementById("modal-overlay").classList.remove("active");
+    }
+
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        if (currentModalType === "settings") {
+            document.querySelector(".sidebar-logo").innerHTML = `<span class="dot"></span> ${fd.get("dashTitle")}`;
+            closeModal();
+            return;
+        }
+        if (currentModalType === "stock") {
+            const item = { ticker: fd.get("ticker").toUpperCase(), shares: parseFloat(fd.get("shares")), avgCost: parseFloat(fd.get("avgCost")), currentPrice: parseFloat(fd.get("currentPrice")) };
+            if (currentEditIndex !== null) DATA.portfolio[currentEditIndex] = item;
+            else DATA.portfolio.push(item);
+        } else if (currentModalType === "video") {
+            const item = { title: fd.get("title"), channel: fd.get("channel"), date: fd.get("date"), url: fd.get("url") || "#", tags: fd.get("tags").split(",").map(t => t.trim()).filter(Boolean) };
+            if (currentEditIndex !== null) DATA.videos[currentEditIndex] = item;
+            else DATA.videos.push(item);
+        } else if (currentModalType === "watchlist") {
+            const item = { ticker: fd.get("ticker").toUpperCase(), price: parseFloat(fd.get("price")), target: parseFloat(fd.get("target")), notes: fd.get("notes") };
+            if (currentEditIndex !== null) DATA.watchlist[currentEditIndex] = item;
+            else DATA.watchlist.push(item);
+        }
+        closeModal();
+        renderAll();
+    }
+
+    function editStock(i) { currentModalType = "stock"; currentEditIndex = i; document.getElementById("modal-title").textContent = "Edit Stock"; renderModalFields(DATA.portfolio[i]); document.getElementById("modal-overlay").classList.add("active"); }
+    function editVideo(i) { currentModalType = "video"; currentEditIndex = i; document.getElementById("modal-title").textContent = "Edit Video"; renderModalFields(DATA.videos[i]); document.getElementById("modal-overlay").classList.add("active"); }
+    function editWatchlist(i) { currentModalType = "watchlist"; currentEditIndex = i; document.getElementById("modal-title").textContent = "Edit Watchlist Item"; renderModalFields(DATA.watchlist[i]); document.getElementById("modal-overlay").classList.add("active"); }
+
+    function deleteItem(type, i) {
+        if (!confirm("Delete this item?")) return;
+        DATA[type].splice(i, 1);
+        renderAll();
+    }
+
+    // ========== INIT ==========
+    document.getElementById("current-date").textContent = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    renderAll();
+    </script>
+</body>
+</html>
