@@ -222,6 +222,85 @@
         .empty-state .icon { font-size: 2.4rem; margin-bottom: 14px; }
         .empty-state p { font-size: 0.9rem; }
 
+        /* --- Video Summary Detail --- */
+        .summary-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .summary-tab {
+            padding: 8px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; border: 1px solid var(--border); background: var(--bg-card);
+            color: var(--text-secondary); transition: all 0.2s;
+        }
+        .summary-tab:hover { background: var(--bg-card-hover); color: #fff; }
+        .summary-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .summary-content { display: none; }
+        .summary-content.active { display: block; }
+        .summary-section {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 24px; margin-bottom: 16px;
+        }
+        .summary-section h3 {
+            font-size: 1rem; font-weight: 700; color: var(--accent-light);
+            margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+        }
+        .summary-section ul { list-style: none; padding: 0; }
+        .summary-section li {
+            padding: 6px 0; font-size: 0.85rem; color: var(--text-secondary);
+            line-height: 1.6; position: relative; padding-left: 16px;
+        }
+        .summary-section li::before {
+            content: "•"; position: absolute; left: 0; color: var(--accent);
+        }
+        .stock-header {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+        }
+        .stock-ticker-badge {
+            background: var(--red); color: #fff; padding: 4px 14px;
+            border-radius: 6px; font-weight: 700; font-size: 0.85rem;
+        }
+        .stock-name { color: var(--text-secondary); font-size: 0.85rem; }
+        .stock-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 24px; margin-bottom: 16px;
+        }
+        .case-label {
+            font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 8px; margin-top: 14px;
+        }
+        .case-label.bull { color: var(--green); }
+        .case-label.bear { color: var(--red); }
+        .case-label.timeline { color: var(--accent-light); }
+        .case-label.discuss { color: #fff; }
+        .macro-table {
+            width: 100%; border-collapse: collapse;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .macro-table th {
+            text-align: left; padding: 12px 16px; font-size: 0.72rem;
+            text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);
+            background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border);
+        }
+        .macro-table td {
+            padding: 12px 16px; font-size: 0.83rem; color: var(--text-secondary);
+            border-bottom: 1px solid var(--border); line-height: 1.5;
+        }
+        .macro-table td:first-child { color: #fff; font-weight: 600; white-space: nowrap; min-width: 140px; }
+        .macro-table tr:last-child td { border-bottom: none; }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 16px; border-radius: 8px; font-size: 0.85rem;
+            cursor: pointer; border: 1px solid var(--border); background: var(--bg-card);
+            color: var(--text-secondary); transition: all 0.2s; margin-bottom: 20px;
+        }
+        .back-btn:hover { background: var(--bg-card-hover); color: #fff; }
+        .video-date-badge {
+            display: inline-block; padding: 3px 10px; background: rgba(108,99,255,0.15);
+            color: var(--accent-light); border-radius: 6px; font-size: 0.72rem; font-weight: 600;
+        }
+        .source-link {
+            color: var(--accent-light); text-decoration: none; font-size: 0.8rem;
+        }
+        .source-link:hover { text-decoration: underline; }
+
         /* --- Mobile --- */
         .menu-toggle {
             display: none; position: fixed; top: 16px; left: 16px; z-index: 200;
@@ -288,34 +367,401 @@
 
             <!-- PORTFOLIO SECTION -->
             <div id="section-portfolio">
+                <!-- SwingBot Stats Row -->
                 <div class="stats-row" id="stats-row"></div>
+
+                <!-- Open Positions -->
                 <div class="section">
-                    <div class="section-title">Stock Positions</div>
+                    <div class="section-title" style="display:flex;align-items:center;gap:10px;">
+                        <span>🤖 SwingBot — Open Positions</span>
+                        <span id="swingbot-badge" style="font-size:0.72rem;background:#6c63ff22;color:#6c63ff;border:1px solid #6c63ff55;border-radius:20px;padding:2px 10px;font-weight:600;">Paper Trading</span>
+                    </div>
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Ticker</th>
                                     <th>Shares</th>
-                                    <th>Avg Cost</th>
-                                    <th>Current Price</th>
-                                    <th>Total Value</th>
-                                    <th>P/L</th>
+                                    <th>Entry</th>
+                                    <th>Current</th>
+                                    <th>Stop Loss</th>
+                                    <th>Target</th>
+                                    <th>Value</th>
+                                    <th>Unrealized P/L</th>
+                                    <th>Risk</th>
                                 </tr>
                             </thead>
                             <tbody id="portfolio-table"></tbody>
                         </table>
+                    </div>
+                    <div id="no-positions-msg" style="display:none;text-align:center;padding:40px 0;color:var(--text-secondary);font-size:0.9rem;">
+                        📭 No open positions. Run a daily eval to find new setups.
+                    </div>
+                </div>
+
+                <!-- Closed Trades -->
+                <div class="section" style="margin-top:16px;">
+                    <div class="section-title">📋 Closed Trades</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ticker</th>
+                                    <th>Entry Date</th>
+                                    <th>Exit Date</th>
+                                    <th>Entry</th>
+                                    <th>Exit</th>
+                                    <th>Shares</th>
+                                    <th>Realized P/L</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody id="closed-trades-table"></tbody>
+                        </table>
+                    </div>
+                    <div id="no-closed-msg" style="display:none;text-align:center;padding:32px 0;color:var(--text-secondary);font-size:0.9rem;">
+                        No closed trades yet.
                     </div>
                 </div>
             </div>
 
             <!-- VIDEO SUMMARIES SECTION -->
             <div id="section-videos" style="display:none;">
-                <div class="section">
+                <!-- Video List View -->
+                <div id="video-list-view" class="section">
                     <div class="section-title">Video Summaries</div>
-                    <div class="empty-state">
-                        <div class="icon">&#9654;</div>
-                        <p>No video summaries posted yet. Check back soon!</p>
+                    <div class="video-grid">
+                        <div class="video-card" onclick="showVideoDetail('sesang-20260322')">
+                            <div class="video-thumb">
+                                <div class="play-icon">&#9654;</div>
+                                <div class="channel-badge">세상학개론</div>
+                            </div>
+                            <div class="video-body">
+                                <div class="video-title">3월 4주차 라이브 — 주식 분석 요약</div>
+                                <div class="video-meta">2026-03-22 · fanding.kr/sesang101</div>
+                                <span class="video-tag">IREN</span>
+                                <span class="video-tag">CRCL</span>
+                                <span class="video-tag">RKLB</span>
+                                <span class="video-tag">TSLA</span>
+                                <span class="video-tag">PLTR</span>
+                                <span class="video-tag">매크로</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Detail View -->
+                <div id="video-detail-sesang-20260322" style="display:none;">
+                    <button class="back-btn" onclick="hideVideoDetail()">&#8592; Back to list</button>
+                    <div style="margin-bottom:20px;">
+                        <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:6px;">세상학개론 · 3월 4주차 라이브 (3.22)</h2>
+                        <span class="video-date-badge">2026-03-22</span>
+                        <a href="https://fanding.kr/sesang101/post/181761" target="_blank" class="source-link" style="margin-left:10px;">&#128279; 출처</a>
+                    </div>
+
+                    <div class="summary-tabs">
+                        <div class="summary-tab active" onclick="switchTab('key-takeaways',this)">핵심 요약</div>
+                        <div class="summary-tab" onclick="switchTab('stocks',this)">종목 분석</div>
+                        <div class="summary-tab" onclick="switchTab('macro',this)">시장 전망</div>
+                        <div class="summary-tab" onclick="switchTab('strategy',this)">투자 전략</div>
+                        <div class="summary-tab" onclick="switchTab('terms',this)">용어 해설</div>
+                        <div class="summary-tab" onclick="switchTab('risks',this)">리스크</div>
+                        <div class="summary-tab" onclick="switchTab('actions',this)">실행 아이디어</div>
+                        <div class="summary-tab" onclick="switchTab('casual',this)">잡담/Q&A</div>
+                    </div>
+
+                    <!-- KEY TAKEAWAYS -->
+                    <div class="summary-content active" id="tab-key-takeaways">
+                        <div class="summary-section">
+                            <h3>&#128273; 핵심 요약 (Key Takeaways)</h3>
+                            <ul>
+                                <li>공포·탐욕지수 15 (극단적 공포) → 역사적으로 매수 승률이 높은 구간. 손익비 측면에서 상방이 더 크다고 판단</li>
+                                <li>10년 국채금리 4.5% 상단 근접 → 파월 연준의장 유지 시 금리인하 횟수 축소 반영, 케피노(Kevin Warsh) 인준 통과 시 다시 반등 가능성</li>
+                                <li>스태그플레이션 현실화 우려에 파월 의장은 70년대식 스태그플레이션 가능성 배제 입장</li>
+                                <li>서클(CRCL) — 클래러티법(Clarity Act)·GENIUS법 상원 통과 기대감 상승, USDC 발행량 최고치 경신 지속</li>
+                                <li>이란-미국 갈등 장기화 시 한국이 에너지(가스) 영향 가장 큰 나라. 호르무즈 해협 변수</li>
+                                <li>AI 에이전트 변곡점 2026년 도래(젠슨 황), 피지컬 AI(로봇)는 수년 후. AI 에이전트 수혜주 집중</li>
+                                <li>국내 코스피: 상법 개정 + AI 메모리 반도체(삼성전자, SK하이닉스) 수혜로 4000~5000p 이상 가능</li>
+                                <li>매수 전략: 공포지수 15~22 구간에서 분할 매수 → 역사적 승률 높음</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- STOCKS -->
+                    <div class="summary-content" id="tab-stocks">
+                        <!-- IREN -->
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-ticker-badge">IREN</span>
+                                <span class="stock-name">Iren Ltd — 데이터센터 / 비트코인 채굴 복합기업</span>
+                            </div>
+                            <div class="case-label discuss">&#9632; 논의 요약</div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>현재 발표자의 최대 비중 보유 종목. 연말 폭락 시 $30에 대량 매수 → 이미 $40대까지 빠르게 회복</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>저평가 상태 유지. 동종 채굴·데이터센터 기업 중 최근 1년 주가 상승률 최고 수준</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>CEO 희석(dilution) 이슈 — 타 채굴기업 대비 매우 적어 선호도 높음</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>우주 데이터센터(SpaceX·Rocket Lab 연계) 현실화 시 2~3년 후 수혜 가능</li>
+                            </ul>
+                            <div class="case-label bull">&#9650; Bull Case</div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:3px 0 3px 16px;font-size:0.82rem;color:var(--green);position:relative;"><span style="position:absolute;left:0;">•</span>AI 데이터센터 공급 부족 → 수요 폭발적 증가 → 장기 성장 지속</li>
+                                <li style="padding:3px 0 3px 16px;font-size:0.82rem;color:var(--green);position:relative;"><span style="position:absolute;left:0;">•</span>CEO 지분 높고 희석 최소화 → 주주 친화적 경영</li>
+                            </ul>
+                            <div class="case-label bear">&#9660; Bear Case</div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:3px 0 3px 16px;font-size:0.82rem;color:var(--red);position:relative;"><span style="position:absolute;left:0;">•</span>우주 데이터센터 경쟁사 증가 시 밸류 희석 가능성</li>
+                                <li style="padding:3px 0 3px 16px;font-size:0.82rem;color:var(--red);position:relative;"><span style="position:absolute;left:0;">•</span>전반적 시장 하락 시 고베타 종목으로 낙폭 클 수 있음</li>
+                            </ul>
+                            <div class="case-label timeline">&#9202; 투자 시계</div>
+                            <p style="font-size:0.83rem;color:var(--accent-light);padding-left:16px;">장기 보유 (목표 $150+, 매수단가 대비 약 30배 달성 시 비중 조절 검토)</p>
+                        </div>
+
+                        <!-- CRCL -->
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-ticker-badge">CRCL</span>
+                                <span class="stock-name">Circle Internet Group — 스테이블코인(USDC) 발행사</span>
+                            </div>
+                            <div class="case-label discuss">&#9632; 논의 요약</div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>$50 매수분 3배, $70 매수분 약 2배 수익 → '효자 종목'</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>USDC 발행량 최고치 지속 경신: 이란전쟁 불확실성 + AI 에이전트 결제망 수요 급증</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>클래러티법 / GENIUS법 상원 통과 가시화 → 규제 명확성 호재</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>AI 에이전트 시대 M2M 결제의 기축통화 역할</li>
+                            </ul>
+                            <div class="case-label bull">&#9650; Bull Case</div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:3px 0 3px 16px;font-size:0.82rem;color:var(--green);position:relative;"><span style="position:absolute;left:0;">•</span>AI 에이전트 결제망 → USDC 수요 폭발적 증가 가능성</li>
+                                <li style="padding:3px 0 3px 16px;font-size:0.82rem;color:var(--green);position:relative;"><span style="position:absolute;left:0;">•</span>클래러티법 통과 → 기관 스테이블코인 채택 가속화</li>
+                            </ul>
+                            <div class="case-label bear">&#9660; Bear Case</div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:3px 0 3px 16px;font-size:0.82rem;color:var(--red);position:relative;"><span style="position:absolute;left:0;">•</span>금리 급격 인하 시 이자 수익 급감 가능</li>
+                                <li style="padding:3px 0 3px 16px;font-size:0.82rem;color:var(--red);position:relative;"><span style="position:absolute;left:0;">•</span>규제 리스크: 클래러티법 통과 지연 시 불확실성 지속</li>
+                            </ul>
+                            <div class="case-label timeline">&#9202; 투자 시계</div>
+                            <p style="font-size:0.83rem;color:var(--accent-light);padding-left:16px;">중~장기. 비중 증가 추세 유지 (AI 에이전트 시장 성장에 비례)</p>
+                        </div>
+
+                        <!-- RKLB -->
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-ticker-badge">RKLB</span>
+                                <span class="stock-name">Rocket Lab USA — 소형 발사체·우주 인프라</span>
+                            </div>
+                            <div class="case-label discuss">&#9632; 논의 요약</div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>발사 성공률 거의 100% — 우주 데이터센터 시대 핵심 인프라 기업</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>엔비디아가 우주 쪽 밀고 있어 로켓랩 장기 수혜 예상</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>SpaceX 상장 기대감 → 우주 섹터 전반 주목도 상승</li>
+                            </ul>
+                            <div class="case-label timeline">&#9202; 투자 시계</div>
+                            <p style="font-size:0.83rem;color:var(--accent-light);padding-left:16px;">장기 보유. 우주 데이터센터 본격화(약 2~3년 후) 시 수혜</p>
+                        </div>
+
+                        <!-- Other stocks compact -->
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-ticker-badge">TSLA</span>
+                                <span class="stock-name">Tesla — 전기차·AI·에너지</span>
+                            </div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>5~10년 장기 보유 시 매력적. 일론 머스크 의존도 높은 리스크</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>단기(1년) 시계에서는 대안이 너무 많아 우선순위 낮음</li>
+                            </ul>
+                        </div>
+
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-ticker-badge">PLTR</span>
+                                <span class="stock-name">Palantir Technologies — AI·데이터 분석</span>
+                            </div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>파운더 CEO(알렉스 카프) 중심, 팬덤 보유 기업으로 긍정 평가</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>정부·기업 AI 데이터 분석 플랫폼 장기 성장 스토리 유효</li>
+                            </ul>
+                        </div>
+
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-ticker-badge">ETH</span>
+                                <span class="stock-name">Ethereum — 2세대 블록체인</span>
+                            </div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>현재 보유 중. 스테이킹 대기 증가 → 상승 기대감</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>최근 수년간 기대 대비 실망 반복. 불확실성 높음</li>
+                            </ul>
+                        </div>
+
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-ticker-badge">JOBY</span>
+                                <span class="stock-name">Joby Aviation — 도심 항공 모빌리티(eVTOL)</span>
+                            </div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>파운더 CEO 중심 기업, 장기 보유 포지션</li>
+                            </ul>
+                        </div>
+
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-ticker-badge">COHR / LITE</span>
+                                <span class="stock-name">Coherent / Lumentum — 광통신 (Optical Networking)</span>
+                            </div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>AI 데이터센터 병목 구간으로 여전히 성장 중이나, 엔비디아가 직접 대체 기술 채택 시 급락 리스크</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>구리 케이블 대비 광통신 장기 우세 확실하지만, 기술 선택은 엔비디아 내러티브에 달려 있음</li>
+                            </ul>
+                        </div>
+
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-ticker-badge">IONQ / INFN</span>
+                                <span class="stock-name">IonQ / Inflection — 양자 컴퓨팅</span>
+                            </div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>현재 공부 중. 아직 매수 미진행. 중국 국가전략으로 추진, 미-중 기술 경쟁 내러티브</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>다음 강세장에서 유망 테마. 블룸버그 터미널로 실적 녹취록 분석 중</li>
+                            </ul>
+                        </div>
+
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-ticker-badge">KOSPI</span>
+                                <span class="stock-name">코스피 — 국내 주식시장</span>
+                            </div>
+                            <ul style="list-style:none;padding:0;">
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>고점 아님. 상법 개정 + AI 메모리 반도체 → 4000~5000p 이상 가능</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>단기 변수: 호르무즈 해협 봉쇄(가스 가격) — 한국이 최대 피해국</li>
+                                <li style="padding:4px 0 4px 16px;font-size:0.83rem;color:var(--text-secondary);position:relative;"><span style="position:absolute;left:0;color:var(--accent);">•</span>10년 장기 시계에서는 고점 아님</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- MACRO -->
+                    <div class="summary-content" id="tab-macro">
+                        <div class="summary-section">
+                            <h3>&#127758; 시장 전망 및 거시경제</h3>
+                            <table class="macro-table">
+                                <thead><tr><th>지표/이슈</th><th>내용</th></tr></thead>
+                                <tbody>
+                                    <tr><td>공포·탐욕지수</td><td>현재 약 15 (극단적 공포). 2024년 11월 이후 최저점 재진입 → 역사적 매수 기회 구간</td></tr>
+                                    <tr><td>10년 국채금리</td><td>4.5% 수준 — 채권 투매(금리 상승) 진행 중. 스태그플레이션 우려이나 파월 의장 부정</td></tr>
+                                    <tr><td>연준 의장 불확실성</td><td>케피노(Kevin Warsh) 지명자 상원 인준 불확실. 텀틸리스 의원이 파월 조사 중단 안 하면 인준 보이콧 시사</td></tr>
+                                    <tr><td>이란-미국 전쟁</td><td>지상군 투입(해병대) 시작 → 막바지 신호로 해석. 호르무즈 해협 봉쇄 리스크 점진적 해소 가능</td></tr>
+                                    <tr><td>AI 에이전트</td><td>젠슨 황: 2026년이 AI 에이전트 변곡점. 피지컬 AI(로봇)는 'a few years' 후</td></tr>
+                                    <tr><td>스테이블코인 규제</td><td>클래러티법 + GENIUS법: 금요일(3.21) 합의 도출 → 통과 기대감 상승</td></tr>
+                                    <tr><td>시장 회복 탄력성</td><td>SNS·커뮤니티 발달로 공포 확산 속도와 회복 속도가 모두 빨라짐. 폭락장이 짧아지는 추세</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- STRATEGY -->
+                    <div class="summary-content" id="tab-strategy">
+                        <div class="summary-section">
+                            <h3>&#127919; 투자 전략 및 철학</h3>
+                            <ul>
+                                <li>매수 타이밍: 공포·탐욕지수 10대~22 구간에서 분할 매수. 정확한 저점 포착보다 범위 접근</li>
+                                <li>포트폴리오 점검 루틴: 매달 '지금 모든 자산이 현금이라면 똑같이 구성할 것인가?' 자문 → 관성 투자 방지</li>
+                                <li>CEO 중심 종목 선별: 파운더 CEO, 본인 지분, 팬덤 있는 기업 선호 (IREN, RKLB, PLTR, Tesla)</li>
+                                <li>유상증자 관점: 성장주의 유상증자는 현금 확보 → 성장 가속 → 장기 호재. 작전주만 악재</li>
+                                <li>매매 빈도: 월 1~2회 거래. 장 실시간 관찰 최소화 → 뉴스·리포트 분석 집중</li>
+                                <li>코인 철학: 알트코인보다 비트·이더 위주. 주식 비중 확대 추세</li>
+                                <li>시간이 가장 중요한 투자 재료: 투자 성공 레시피에서 '시간'을 빼려는 시도는 성장 방해</li>
+                                <li>캐시플로우 없는 전업 투자: 10억~20억 이상 자산 없으면 비추. 직업/전문직 병행 추천</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- TERMS -->
+                    <div class="summary-content" id="tab-terms">
+                        <div class="summary-section">
+                            <h3>&#128218; 용어 해설 (Finance Terms)</h3>
+                            <table class="macro-table">
+                                <thead><tr><th>용어</th><th>설명</th></tr></thead>
+                                <tbody>
+                                    <tr><td>공포·탐욕지수</td><td>CNN이 산출하는 시장 심리 지표 (0=극단적 공포, 100=극단적 탐욕). 15 수준은 역사적 바닥권</td></tr>
+                                    <tr><td>스태그플레이션</td><td>경기 침체 + 인플레이션 동시 발생. 금리 인상도 인하도 어려운 최악의 조합</td></tr>
+                                    <tr><td>클래러티법 / GENIUS법</td><td>미국 스테이블코인 규제 법안. 통과 시 Circle 등 수혜 예상</td></tr>
+                                    <tr><td>사모신용 (Private Credit)</td><td>사모펀드·자산운용사가 직접 기업에 대출하는 비공개 채권 시장. 아폴로, 블루 아울 등이 주요 플레이어</td></tr>
+                                    <tr><td>유상증자</td><td>기업이 신주를 발행해 자금 조달. 성장주의 경우 장기적으로 현금 확보 → 성장 가속</td></tr>
+                                    <tr><td>USDC</td><td>Circle이 발행하는 미국 달러 연동 스테이블코인. 1USDC = $1. 준비금으로 미국 국채 보유 → 금리 수익 발생</td></tr>
+                                    <tr><td>물극필반</td><td>극단값은 장기 평균으로 되돌아온다는 법칙. 투자 사이클에 적용</td></tr>
+                                    <tr><td>블룸버그 터미널</td><td>월가 전문 투자자용 금융 데이터 플랫폼. 월 구독료 약 $2,000~3,000</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- RISKS -->
+                    <div class="summary-content" id="tab-risks">
+                        <div class="summary-section">
+                            <h3>&#9888; 리스크 및 경고</h3>
+                            <ul>
+                                <li>이란-호르무즈 위기 장기화 시 에너지 가격 급등 → 한국 수입물가 타격</li>
+                                <li>케피노 연준 의장 인준 불발 → 파월 유임 → 금리 인하 기대 감소 → 시장 추가 조정</li>
+                                <li>스테이블코인 규제 법안 통과 실패 시 서클(CRCL) 주가 하락 압력</li>
+                                <li>엔비디아가 광통신 대신 다른 기술 채택 시 Coherent, Lumentum 급락 가능</li>
+                                <li>단기 매매(단타)로 전업 투자 시도는 매우 위험</li>
+                                <li>특정 종목 언급은 매수·매도 추천 아님. 본인 분석 후 판단 필수</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- ACTIONS -->
+                    <div class="summary-content" id="tab-actions">
+                        <div class="summary-section">
+                            <h3>&#9989; 실행 아이디어</h3>
+                            <ul>
+                                <li>공포지수 15~22 구간 진입 확인 후 IREN, CRCL, RKLB 중심 분할 매수 검토</li>
+                                <li>서클(CRCL) — 클래러티법 상원 표결 일정 모니터링. 통과 전후 변동성 대비</li>
+                                <li>케피노 인준 동향 추적 → 인준 통과 시 금리인하 기대 회복 → 성장주 반등 신호</li>
+                                <li>포트폴리오 점검: '지금 현금이라면 동일하게 구성할 것인가?' 월 1회 자문</li>
+                                <li>양자 컴퓨팅(IonQ, Inflection 등) 스터디 → 다음 강세장 테마 대비 사전 조사</li>
+                                <li>블룸버그 인텔리전스 리포트, 기업 실적 발표 Transcript 활용한 심층 분석 시작</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- CASUAL / Q&A -->
+                    <div class="summary-content" id="tab-casual">
+                        <div class="summary-section">
+                            <h3>&#128172; 일반 콘텐츠 / 잡담</h3>
+                            <div class="case-label discuss">개인 이야기</div>
+                            <ul>
+                                <li>3월 23일 생일. 부모님과 저녁 식사</li>
+                                <li>레스토랑 '이음(한식 다이닝)' 투자자: 브라이튼 여의도 2층</li>
+                                <li>비상장 주식 약 30개 투자 중. 모래(MORAE), 모티프(Motif) — 국가대표 AI 기업</li>
+                                <li>블룸버그 터미널 최근 계약, 1달 체험 중</li>
+                                <li>양자 컴퓨팅 백서 약 500페이지 읽는 중</li>
+                                <li>MBTI: ENTJ. 고려대 경영대 출신</li>
+                            </ul>
+                        </div>
+                        <div class="summary-section">
+                            <h3>&#128161; 투자 철학 / 마인드셋</h3>
+                            <ul>
+                                <li>투자 근육론: 지식도 스노우볼처럼 쌓임. 시간이 가장 중요한 재료</li>
+                                <li>시간 단축 금물: 'MSG를 넣어 시간을 우회하려는 시도'는 성장 방해</li>
+                                <li>종목 사랑에 빠지지 않기: 투자 가설이 무너지면 즉시 정리</li>
+                                <li>'나는 매수·매도를 추천하지 않는다': 의존성이 가장 해롭다</li>
+                                <li>인생 게임론: 제3자 시점으로 자신을 게임 캐릭터처럼 봄 → 업적 쌓는 재미로 살아감</li>
+                            </ul>
+                        </div>
+                        <div class="summary-section">
+                            <h3>&#10067; Q&A 하이라이트</h3>
+                            <table class="macro-table">
+                                <thead><tr><th>질문</th><th>답변</th></tr></thead>
+                                <tbody>
+                                    <tr><td>군인 3천만원 전업투자?</td><td>10억~20억 이하에서는 비추. 캐시플로우 없는 전업은 리스크. 자신의 가치를 높이는 게 우선</td></tr>
+                                    <tr><td>투자 통찰력은 어디서?</td><td>독서, 신문, 뉴스를 몇 년간 지속 → 스노우볼처럼 지식 축적. 단기 시도 불가</td></tr>
+                                    <tr><td>환율 부담 시 매수?</td><td>환율은 아예 신경 쓰지 않음. 목표가 10%가 아니라 몇 배이기 때문</td></tr>
+                                    <tr><td>투자 실패 경험?</td><td>깡통 경험 없음. 레버리지·단타 안 하고 존버 가능한 종목 위주. 보수적 스타일</td></tr>
+                                    <tr><td>미장 실시간 관찰?</td><td>밤에 보지 않음. 프리마켓(오전 10시 반)에 확인. 월 1~2회 거래가 전부</td></tr>
+                                    <tr><td>아이렌 매도 계획?</td><td>$150+ 도달 시 미래 반영 여부 점검. 더 큰 상방이 보이면 유지. 사전 목표가는 없음</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -323,56 +769,133 @@
     </div>
 
     <script>
-    // ========== YOUR PORTFOLIO DATA ==========
-    // Edit these values to update your portfolio
-    const PORTFOLIO = [
-        { ticker: "AAPL", shares: 15,  avgCost: 178.50, currentPrice: 195.20 },
-        { ticker: "NVDA", shares: 10,  avgCost: 480.00, currentPrice: 920.50 },
-        { ticker: "MSFT", shares: 8,   avgCost: 370.25, currentPrice: 415.80 },
-        { ticker: "TSLA", shares: 12,  avgCost: 245.00, currentPrice: 178.30 },
-        { ticker: "AMZN", shares: 20,  avgCost: 155.00, currentPrice: 186.40 },
-    ];
+    // ========== SWINGBOT PORTFOLIO DATA ==========
+    // Synced from swingbot_portfolio.json — updated by Claude/SwingBot
+    // Last synced: 2026-03-25
+    const SWINGBOT = {
+        cash: 10000,
+        total_deposited: 10000,
+        starting_capital: 10000,
+        total_realized_pnl: 0,
+        day_count: 0,
+        last_updated: "2026-03-25T00:00:00-04:00",
+        positions: [],
+        closed_trades: [],
+        funding_history: [
+            {
+                "date": "2026-03-25",
+                "amount": 10000,
+                "type": "initial",
+                "total_deposited_after": 10000
+            }
+        ],
+        monthly_pnl_snapshots: []
+    };
 
     // ========== HELPERS ==========
-    function fmt(n) { return "$" + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    function fmt(n) { return "$" + Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    function fmtSigned(n) { return (n >= 0 ? "+" : "-") + "$" + Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 
     // ========== RENDER ==========
     function renderPortfolio() {
-        const totalValue = PORTFOLIO.reduce((s, p) => s + p.currentPrice * p.shares, 0);
-        const totalCost  = PORTFOLIO.reduce((s, p) => s + p.avgCost * p.shares, 0);
-        const totalPL    = totalValue - totalCost;
-        const plPct      = ((totalPL / totalCost) * 100).toFixed(2);
-        const isUp       = totalPL >= 0;
-        const sign       = isUp ? "+" : "";
+        const positions    = SWINGBOT.positions || [];
+        const closedTrades = SWINGBOT.closed_trades || [];
+        const cash         = SWINGBOT.cash || 0;
 
-        // Stats
+        // Unrealized P&L from open positions
+        const posValue   = positions.reduce((s, p) => s + (p.currentPrice || p.entry_price) * p.shares, 0);
+        const posCost    = positions.reduce((s, p) => s + p.entry_price * p.shares, 0);
+        const unrealPnl  = posValue - posCost;
+
+        const totalEquity  = cash + posValue;
+        const totalPnl     = SWINGBOT.total_realized_pnl + unrealPnl;
+        const totalPnlPct  = ((totalPnl / SWINGBOT.starting_capital) * 100).toFixed(2);
+        const isUp         = totalPnl >= 0;
+
+        // Funding progress
+        const fundingPct   = ((SWINGBOT.total_deposited / 100000) * 100).toFixed(0);
+
+        // Stats cards
         document.getElementById("stats-row").innerHTML = [
-            { label: "Portfolio Value",  value: fmt(totalValue), change: PORTFOLIO.length + " positions",              up: true  },
-            { label: "Total Cost Basis", value: fmt(totalCost),  change: "Amount invested",                            up: true  },
-            { label: "Total P/L",        value: sign + fmt(totalPL), change: sign + plPct + "% overall return",        up: isUp  },
+            {
+                label: "Total Equity",
+                value: fmt(totalEquity),
+                change: "Cash " + fmt(cash) + " + Positions " + fmt(posValue),
+                up: true
+            },
+            {
+                label: "Total P&L",
+                value: fmtSigned(totalPnl),
+                change: (isUp ? "+" : "") + totalPnlPct + "% vs starting capital",
+                up: isUp
+            },
+            {
+                label: "Realized P&L",
+                value: fmtSigned(SWINGBOT.total_realized_pnl),
+                change: closedTrades.length + " closed trade" + (closedTrades.length !== 1 ? "s" : ""),
+                up: SWINGBOT.total_realized_pnl >= 0
+            },
+            {
+                label: "Funding Progress",
+                value: fmt(SWINGBOT.total_deposited),
+                change: fundingPct + "% of $100k goal · Day " + SWINGBOT.day_count,
+                up: true
+            }
         ].map((s, i) => `
             <div class="stat-card animate-in d${i+1}">
                 <div class="stat-label">${s.label}</div>
-                <div class="stat-value" style="color:${i===2 ? (isUp ? 'var(--green)' : 'var(--red)') : '#fff'}">${s.value}</div>
+                <div class="stat-value" style="color:${i===1 ? (s.up ? 'var(--green)' : 'var(--red)') : i===2 ? (s.up ? 'var(--green)' : 'var(--red)') : '#fff'}">${s.value}</div>
                 <div class="stat-change ${s.up ? 'up' : 'down'}">${s.change}</div>
             </div>
         `).join("");
 
-        // Table rows
-        document.getElementById("portfolio-table").innerHTML = PORTFOLIO.map(p => {
-            const pl    = (p.currentPrice - p.avgCost) * p.shares;
-            const plPct = ((p.currentPrice - p.avgCost) / p.avgCost * 100).toFixed(2);
-            const up    = pl >= 0;
-            const sig   = up ? "+" : "";
-            return `<tr>
-                <td class="ticker">${p.ticker}</td>
-                <td>${p.shares}</td>
-                <td>${fmt(p.avgCost)}</td>
-                <td>${fmt(p.currentPrice)}</td>
-                <td>${fmt(p.currentPrice * p.shares)}</td>
-                <td><span class="badge ${up ? 'badge-green' : 'badge-red'}">${sig}${fmt(pl)} (${sig}${plPct}%)</span></td>
-            </tr>`;
-        }).join("");
+        // Open positions table
+        if (positions.length === 0) {
+            document.getElementById("portfolio-table").innerHTML = "";
+            document.getElementById("no-positions-msg").style.display = "block";
+        } else {
+            document.getElementById("no-positions-msg").style.display = "none";
+            document.getElementById("portfolio-table").innerHTML = positions.map(p => {
+                const curPrice = p.currentPrice || p.entry_price;
+                const pl       = (curPrice - p.entry_price) * p.shares;
+                const plPct    = ((curPrice - p.entry_price) / p.entry_price * 100).toFixed(2);
+                const up       = pl >= 0;
+                const riskColor = p.risk_bucket === "AGGRESSIVE" ? "#ff6b6b" : "#51cf66";
+                return `<tr>
+                    <td class="ticker">${p.ticker}</td>
+                    <td>${p.shares}</td>
+                    <td>${fmt(p.entry_price)}</td>
+                    <td>${fmt(curPrice)}</td>
+                    <td style="color:#ff6b6b;">${p.stop_loss ? fmt(p.stop_loss) : "—"}</td>
+                    <td style="color:#51cf66;">${p.price_target ? fmt(p.price_target) : "—"}</td>
+                    <td>${fmt(curPrice * p.shares)}</td>
+                    <td><span class="badge ${up ? 'badge-green' : 'badge-red'}">${up ? "+" : "-"}$${Math.abs(pl).toFixed(2)} (${up ? "+" : ""}${plPct}%)</span></td>
+                    <td><span style="font-size:0.75rem;padding:2px 8px;border-radius:20px;background:${riskColor}22;color:${riskColor};border:1px solid ${riskColor}44;">${p.risk_bucket || "—"}</span></td>
+                </tr>`;
+            }).join("");
+        }
+
+        // Closed trades table
+        if (closedTrades.length === 0) {
+            document.getElementById("closed-trades-table").innerHTML = "";
+            document.getElementById("no-closed-msg").style.display = "block";
+        } else {
+            document.getElementById("no-closed-msg").style.display = "none";
+            document.getElementById("closed-trades-table").innerHTML = closedTrades.map(t => {
+                const pl   = (t.exit_price - t.entry_price) * t.shares;
+                const up   = pl >= 0;
+                return `<tr>
+                    <td class="ticker">${t.ticker}</td>
+                    <td>${t.entry_date || "—"}</td>
+                    <td>${t.exit_date || "—"}</td>
+                    <td>${fmt(t.entry_price)}</td>
+                    <td>${fmt(t.exit_price)}</td>
+                    <td>${t.shares}</td>
+                    <td><span class="badge ${up ? 'badge-green' : 'badge-red'}">${up ? "+" : "-"}$${Math.abs(pl).toFixed(2)}</span></td>
+                    <td><span style="font-size:0.75rem;padding:2px 8px;border-radius:20px;background:${up ? '#51cf6622' : '#ff6b6b22'};color:${up ? '#51cf66' : '#ff6b6b'};border:1px solid ${up ? '#51cf6644' : '#ff6b6b44'};">${up ? "WIN" : "LOSS"}</span></td>
+                </tr>`;
+            }).join("");
+        }
     }
 
     // ========== NAVIGATION ==========
@@ -399,6 +922,22 @@
             document.getElementById("pw-input").value = "";
             document.getElementById("pw-input").focus();
         }
+    }
+
+    // ========== VIDEO SUMMARY TABS ==========
+    function switchTab(tabName, el) {
+        document.querySelectorAll('.summary-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.summary-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + tabName).classList.add('active');
+        el.classList.add('active');
+    }
+    function showVideoDetail(id) {
+        document.getElementById('video-list-view').style.display = 'none';
+        document.getElementById('video-detail-' + id).style.display = 'block';
+    }
+    function hideVideoDetail() {
+        document.querySelectorAll('[id^="video-detail-"]').forEach(d => d.style.display = 'none');
+        document.getElementById('video-list-view').style.display = 'block';
     }
 
     // ========== INIT ==========
