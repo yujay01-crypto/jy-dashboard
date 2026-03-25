@@ -1,0 +1,20 @@
+{
+  "last_updated": "2026-03-25T00:00:00-04:00",
+  "starting_capital": 10000,
+  "total_deposited": 10000,
+  "cash": 10000,
+  "positions": [],
+  "closed_trades": [],
+  "total_realized_pnl": 0,
+  "day_count": 0,
+  "performance_history": [],
+  "funding_history": [
+    {
+      "date": "2026-03-25",
+      "amount": 10000,
+      "type": "initial",
+      "total_deposited_after": 10000
+    }
+  ],
+  "monthly_pnl_snapshots": []
+}
