@@ -13,6 +13,8 @@
     --accent-light: #FFF8ED;
     --green: #2E7D32;
     --green-light: #E8F5E9;
+    --pink: #C2185B;
+    --pink-light: #FCE4EC;
     --red: #C62828;
     --gray-bg: #F7F9FB;
     --gray-border: #DDE3EA;
@@ -28,7 +30,7 @@
     line-height: 1.6;
   }
 
-  /* ── HERO ── */
+  /* HERO */
   .hero {
     background: linear-gradient(135deg, #1A3A5C 0%, #2E6DA4 60%, #4A90C4 100%);
     color: white;
@@ -55,30 +57,23 @@
     backdrop-filter: blur(4px);
   }
 
-  /* ── QUICK INFO ── */
-  .info-bar {
-    background: white;
-    border-bottom: 3px solid var(--accent);
-    padding: 0;
-  }
+  /* QUICK INFO */
+  .info-bar { background: white; border-bottom: 3px solid var(--accent); }
   .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     max-width: 960px;
     margin: 0 auto;
   }
-  .info-item {
-    padding: 16px 20px;
-    border-right: 1px solid var(--gray-border);
-  }
+  .info-item { padding: 16px 20px; border-right: 1px solid var(--gray-border); }
   .info-item:last-child { border-right: none; }
   .info-label { font-size: 11px; color: var(--text-sub); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
   .info-value { font-size: 14px; font-weight: 700; color: var(--blue-dark); }
 
-  /* ── MAIN LAYOUT ── */
+  /* MAIN */
   .main { max-width: 960px; margin: 0 auto; padding: 32px 16px 48px; }
 
-  /* ── DAY SECTION ── */
+  /* DAY SECTION */
   .day-section { margin-bottom: 36px; }
   .day-header {
     display: flex;
@@ -100,7 +95,7 @@
     white-space: nowrap;
   }
   .day-title { font-size: 18px; font-weight: 800; flex: 1; }
-  .day-theme { font-size: 12px; opacity: 0.75; }
+  .day-theme { font-size: 12px; opacity: 0.75; text-align: right; }
   .day-body {
     background: white;
     border-radius: 0 0 14px 14px;
@@ -109,7 +104,7 @@
     overflow: hidden;
   }
 
-  /* ── SECTION GROUP ── */
+  /* SECTION GROUP */
   .section-group { border-bottom: 1px solid var(--gray-border); }
   .section-group:last-child { border-bottom: none; }
   .section-label {
@@ -121,8 +116,14 @@
     letter-spacing: 0.3px;
     border-bottom: 1px solid var(--gray-border);
   }
+  /* Special cherry blossom section */
+  .section-label.blossom {
+    background: var(--pink-light);
+    color: var(--pink);
+    border-bottom-color: #F8BBD0;
+  }
 
-  /* ── TIMELINE ITEM ── */
+  /* TIMELINE ITEM */
   .item {
     display: grid;
     grid-template-columns: 70px 40px 1fr;
@@ -133,15 +134,10 @@
   }
   .item:last-child { border-bottom: none; }
   .item:hover { background: #FAFCFF; }
-  .item-time {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--blue-mid);
-    padding-top: 2px;
-    white-space: nowrap;
-  }
+  .item.blossom-item:hover { background: #FFF0F5; }
+  .item-time { font-size: 13px; font-weight: 700; color: var(--blue-mid); padding-top: 2px; white-space: nowrap; }
+  .item-time.blossom { color: var(--pink); }
   .item-icon { font-size: 20px; text-align: center; padding-top: 1px; }
-  .item-content {}
   .item-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
   .item-detail { font-size: 13px; color: var(--text-sub); line-height: 1.55; margin-bottom: 4px; }
   .item-cost {
@@ -168,6 +164,19 @@
     margin-top: 4px;
     margin-right: 6px;
   }
+  .blossom-tip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--pink-light);
+    color: var(--pink);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-top: 4px;
+    margin-right: 6px;
+  }
   .warn {
     display: inline-flex;
     align-items: center;
@@ -181,17 +190,9 @@
     margin-top: 4px;
   }
 
-  /* ── COST TABLE ── */
+  /* COST TABLE */
   .cost-section { margin-top: 36px; }
-  .cost-section h2 {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--blue-dark);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .cost-section h2 { font-size: 18px; font-weight: 800; color: var(--blue-dark); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
   .cost-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--gray-border); }
   .cost-table thead { background: var(--blue-dark); color: white; }
   .cost-table th { padding: 12px 18px; font-size: 13px; text-align: left; }
@@ -200,25 +201,17 @@
   .cost-table td:last-child { text-align: right; font-weight: 700; color: var(--blue-mid); }
   .cost-table tr:last-child td { border-bottom: none; }
   .cost-table tr:nth-child(even) td { background: var(--gray-bg); }
-  .cost-total { background: var(--blue-light) !important; }
-  .cost-total td { font-weight: 800 !important; color: var(--blue-dark) !important; font-size: 15px !important; border-top: 2px solid var(--blue-mid) !important; }
+  .cost-total td { font-weight: 800 !important; color: var(--blue-dark) !important; font-size: 15px !important; border-top: 2px solid var(--blue-mid) !important; background: var(--blue-light) !important; }
 
-  /* ── FOOTER ── */
-  footer {
-    text-align: center;
-    padding: 24px;
-    font-size: 12px;
-    color: var(--text-sub);
-    border-top: 1px solid var(--gray-border);
-    background: white;
-    margin-top: 48px;
-  }
+  /* FOOTER */
+  footer { text-align: center; padding: 24px; font-size: 12px; color: var(--text-sub); border-top: 1px solid var(--gray-border); background: white; margin-top: 48px; }
 
   @media (max-width: 600px) {
     .hero h1 { font-size: 22px; }
     .info-grid { grid-template-columns: 1fr 1fr; }
     .item { grid-template-columns: 58px 34px 1fr; padding: 12px 14px; }
     .item-title { font-size: 14px; }
+    .day-theme { display: none; }
   }
 </style>
 </head>
@@ -231,6 +224,7 @@
   <div class="hero-sub">4월 26일(토) ~ 4월 28일(월) · Aloft 명동 호텔</div>
   <div class="hero-chips">
     <span class="chip">🍜 로컬 맛집</span>
+    <span class="chip">🌸 남산 벚꽃</span>
     <span class="chip">🛍️ 쇼핑</span>
     <span class="chip">⛳ 스크린골프</span>
     <span class="chip">🎤 KATSEYE</span>
@@ -238,7 +232,7 @@
   </div>
 </div>
 
-<!-- QUICK INFO BAR -->
+<!-- INFO BAR -->
 <div class="info-bar">
   <div class="info-grid">
     <div class="info-item">
@@ -262,7 +256,7 @@
 
 <div class="main">
 
-  <!-- ── DAY 1 ── -->
+  <!-- ══ DAY 1 ══ -->
   <div class="day-section">
     <div class="day-header">
       <span class="day-badge">DAY 1</span>
@@ -297,14 +291,14 @@
             <div class="item-title">6015번 공항리무진 첫차 탑승</div>
             <div class="item-detail">명동역·세종호텔 정류장 하차 / 약 70분 소요</div>
             <span class="item-cost">💰 약 17,000원</span>
-            <span class="tip">💡 출발 전날 공항리무진 공식 앱에서 첫차 시간 재확인</span>
+            <span class="tip">💡 출발 전날 공항리무진 앱에서 첫차 시간 재확인</span>
           </div>
         </div>
         <div class="item">
           <div class="item-time">07:20</div>
           <div class="item-icon">🏨</div>
           <div class="item-content">
-            <div class="item-title">Aloft 명동 호텔 도착 — 짐 맡기기</div>
+            <div class="item-title">Aloft 명동 호텔 — 짐 맡기기</div>
             <div class="item-detail">체크인 전 프런트에 짐 보관 요청 (무료)</div>
             <span class="tip">💡 "짐 맡아주세요" 또는 "Luggage storage please"</span>
           </div>
@@ -317,8 +311,8 @@
           <div class="item-time">08:00</div>
           <div class="item-icon">🍲</div>
           <div class="item-content">
-            <div class="item-title">이문설렁탕 — 아침 해장</div>
-            <div class="item-detail">1904년 전통 설렁탕 / 종로3가 (호텔에서 택시 10분)<br>뜨끈한 설렁탕 한 그릇으로 장거리 비행 피로 회복</div>
+            <div class="item-title">이문설렁탕</div>
+            <div class="item-detail">1904년 전통 / 종로3가 (호텔에서 택시 10분)<br>뜨끈한 설렁탕 한 그릇으로 비행 피로 회복</div>
             <span class="item-cost">💰 14,000원</span>
             <span class="tip">💡 오전 8시 오픈, 현지인들이 아침부터 줄 서는 곳</span>
           </div>
@@ -328,7 +322,7 @@
           <div class="item-icon">🛁</div>
           <div class="item-content">
             <div class="item-title">스파렉스 동대문 — 찜질방</div>
-            <div class="item-detail">연중무휴 24시간 운영 / 이문설렁탕에서 택시 5분<br>사우나·수면실·식당 완비, 장거리 비행 피로 완전 회복</div>
+            <div class="item-detail">연중무휴 24시간 / 이문설렁탕에서 택시 5분<br>사우나·수면실·식당 완비</div>
             <span class="item-cost">💰 약 12,000~15,000원</span>
             <span class="tip">💡 수건·찜질복 제공, 귀중품은 락커 보관</span>
           </div>
@@ -338,7 +332,7 @@
           <div class="item-icon">🏨</div>
           <div class="item-content">
             <div class="item-title">호텔 복귀 & 체크인</div>
-            <div class="item-detail">택시로 명동 호텔 (약 10분) / 짐 찾고 체크인</div>
+            <div class="item-detail">택시로 명동 호텔 / 짐 찾고 체크인 후 샤워</div>
           </div>
         </div>
       </div>
@@ -361,7 +355,7 @@
             <div class="item-title">명동교자 — 저녁</div>
             <div class="item-detail">호텔에서 도보 5분 / 미쉐린 빕 구르망 선정<br>칼국수 + 만두 조합 강추</div>
             <span class="item-cost">💰 칼국수 12,000원</span>
-            <span class="warn">⚠️ 웨이팅 30분~1시간 예상, 오픈 시간에 맞춰 가기</span>
+            <span class="warn">⚠️ 웨이팅 30분~1시간, 오픈 시간에 맞춰 가기</span>
           </div>
         </div>
       </div>
@@ -373,7 +367,7 @@
           <div class="item-icon">🌃</div>
           <div class="item-content">
             <div class="item-title">동대문 야시장</div>
-            <div class="item-detail">지하철 4호선 2정거장 (동대문역사문화공원역)<br>밤 10시~새벽 5시 운영 / 길거리음식·핸드메이드 굿즈</div>
+            <div class="item-detail">지하철 4호선 2정거장 (동대문역사문화공원역)<br>밤 10시~새벽 5시 / 길거리음식·핸드메이드 굿즈</div>
             <span class="tip">💡 입장 무료, 현금 챙기기</span>
           </div>
         </div>
@@ -389,12 +383,12 @@
     </div>
   </div>
 
-  <!-- ── DAY 2 ── -->
+  <!-- ══ DAY 2 ══ -->
   <div class="day-section">
     <div class="day-header">
       <span class="day-badge">DAY 2</span>
       <span class="day-title">일요일 · 4월 27일</span>
-      <span class="day-theme">쇼핑 · 중국집 · HYBE · 을지로</span>
+      <span class="day-theme">벚꽃 · 쇼핑 · 중국집 · HYBE · 을지로</span>
     </div>
     <div class="day-body">
 
@@ -411,9 +405,32 @@
       </div>
 
       <div class="section-group">
+        <div class="section-label blossom">🌸 오전 — 남산 벚꽃 산책</div>
+        <div class="item blossom-item">
+          <div class="item-time blossom">10:30</div>
+          <div class="item-icon">🌸</div>
+          <div class="item-content">
+            <div class="item-title">남산 벚꽃 & 봄 산책</div>
+            <div class="item-detail">호텔에서 도보 20분 또는 택시 5분 (남산 케이블카 하단 승강장)<br>남산은 고도가 높아 4월 말까지 벚꽃·봄꽃 남아있는 경우 많음<br>케이블카 타고 올라가면 서울 시내 뷰와 함께 봄 풍경 감상</div>
+            <span class="item-cost">💰 케이블카 왕복 약 9,000원</span>
+            <span class="blossom-tip">🌸 4월 말 기준 벚꽃 막바지 또는 철쭉·봄꽃으로 대체 가능</span>
+            <span class="tip">💡 걸어서 올라가면 무료, 약 30분 소요</span>
+          </div>
+        </div>
+        <div class="item blossom-item">
+          <div class="item-time blossom">12:00</div>
+          <div class="item-icon">🏙️</div>
+          <div class="item-content">
+            <div class="item-title">남산에서 내려오기</div>
+            <div class="item-detail">케이블카 or 걸어서 하산 / 명동 방향으로 이동</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-group">
         <div class="section-label">🥡 점심 — 남강 중국집</div>
         <div class="item">
-          <div class="item-time">12:30</div>
+          <div class="item-time">13:00</div>
           <div class="item-icon">🥡</div>
           <div class="item-content">
             <div class="item-title">남강 — 자장면 + 탕수육</div>
@@ -427,7 +444,7 @@
       <div class="section-group">
         <div class="section-label">🛒 오후 — 롯데마트 & HYBE Insight</div>
         <div class="item">
-          <div class="item-time">14:30</div>
+          <div class="item-time">15:00</div>
           <div class="item-icon">🛒</div>
           <div class="item-content">
             <div class="item-title">롯데마트 서울역점</div>
@@ -464,7 +481,7 @@
           <div class="item-icon">☕</div>
           <div class="item-content">
             <div class="item-title">을지로 골목 커피 산책</div>
-            <div class="item-detail">호텔에서 도보 15분 / 을지로 3~4가<br>오래된 인쇄소 골목 사이 힙한 카페·바가 공존<br>서울 로컬들이 요즘 즐겨 찾는 숨은 명소</div>
+            <div class="item-detail">호텔에서 도보 15분 / 을지로 3~4가<br>오래된 인쇄소 골목 사이 힙한 카페·바가 공존</div>
             <span class="tip">💡 낮엔 공장골목, 밤엔 힙한 바 거리로 변신</span>
           </div>
         </div>
@@ -480,7 +497,7 @@
     </div>
   </div>
 
-  <!-- ── DAY 3 ── -->
+  <!-- ══ DAY 3 ══ -->
   <div class="day-section">
     <div class="day-header">
       <span class="day-badge">DAY 3</span>
@@ -545,7 +562,7 @@
             <div class="item-title">6015번 공항리무진 탑승</div>
             <div class="item-detail">명동역·세종호텔 정류장 / 인천공항까지 약 70분</div>
             <span class="item-cost">💰 약 17,000원</span>
-            <span class="warn">⚠️ 오후 8시 비행기 기준 17:00 출발 권장</span>
+            <span class="warn">⚠️ 오후 8시 비행기 기준 17:00 탑승 권장</span>
           </div>
         </div>
         <div class="item">
@@ -560,45 +577,4 @@
           <div class="item-time">20:00</div>
           <div class="item-icon">🛫</div>
           <div class="item-content">
-            <div class="item-title">비행기 탑승 — 귀국!</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ── COST TABLE ── -->
-  <div class="cost-section">
-    <h2>💰 예상 비용 요약</h2>
-    <table class="cost-table">
-      <thead>
-        <tr><th>항목</th><th>예상 금액</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>공항버스 왕복 (6015번)</td><td>약 34,000원</td></tr>
-        <tr><td>이문설렁탕 (아침)</td><td>14,000원</td></tr>
-        <tr><td>스파렉스 찜질방</td><td>12,000~15,000원</td></tr>
-        <tr><td>남대문시장 길거리음식</td><td>10,000원 내외</td></tr>
-        <tr><td>명동교자 (저녁)</td><td>약 15,000원</td></tr>
-        <tr><td>남강 자장면+탕수육 2인 세트</td><td>22,000원</td></tr>
-        <tr><td>몽블리 소고기 무한리필</td><td>29,700~32,700원</td></tr>
-        <tr><td>스크린골프 (1시간)</td><td>15,000~25,000원</td></tr>
-        <tr><td>오장동 함흥냉면 + 왕만두</td><td>약 20,000원</td></tr>
-        <tr><td>KATSEYE 라이트스틱</td><td>공식가 별도 확인</td></tr>
-        <tr><td>롯데마트 쇼핑</td><td>자유</td></tr>
-        <tr><td>기타 교통 (택시·지하철)</td><td>약 20,000원 내외</td></tr>
-        <tr class="cost-total"><td>🧾 식비+교통 합계 (쇼핑 제외)</td><td>약 191,700~208,700원</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>
-
-<footer>
-  ※ 가격은 2026년 4월 기준 예상가이며 실제와 다를 수 있습니다.<br>
-  ※ 찜질방·마트·굿즈 매장 영업시간은 방문 전 재확인을 권장합니다.
-</footer>
-
-</body>
-</html>
+            <div class="item-title">비행기 탑승 — �
