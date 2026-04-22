@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서울 여행 플랜 2026</title>
+<style>
+  :root {
+    --blue-dark: #1A3A5C;
+    --blue-mid: #2E6DA4;
+    --blue-light: #E8F4FD;
+    --accent: #E8A020;
+    --accent-light: #FFF8ED;
+    --green: #2E7D32;
+    --green-light: #E8F5E9;
+    --red: #C62828;
+    --gray-bg: #F7F9FB;
+    --gray-border: #DDE3EA;
+    --text: #1E2A38;
+    --text-sub: #5A6A7A;
+    --white: #FFFFFF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    background: var(--gray-bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #1A3A5C 0%, #2E6DA4 60%, #4A90C4 100%);
+    color: white;
+    padding: 48px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-emoji { font-size: 52px; margin-bottom: 12px; }
+  .hero h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .hero-sub { font-size: 15px; opacity: 0.85; margin-bottom: 20px; }
+  .hero-chips { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .chip {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* ── QUICK INFO ── */
+  .info-bar {
+    background: white;
+    border-bottom: 3px solid var(--accent);
+    padding: 0;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .info-item {
+    padding: 16px 20px;
+    border-right: 1px solid var(--gray-border);
+  }
+  .info-item:last-child { border-right: none; }
+  .info-label { font-size: 11px; color: var(--text-sub); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .info-value { font-size: 14px; font-weight: 700; color: var(--blue-dark); }
+
+  /* ── MAIN LAYOUT ── */
+  .main { max-width: 960px; margin: 0 auto; padding: 32px 16px 48px; }
+
+  /* ── DAY SECTION ── */
+  .day-section { margin-bottom: 36px; }
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(90deg, var(--blue-dark), var(--blue-mid));
+    color: white;
+    padding: 16px 22px;
+    border-radius: 14px 14px 0 0;
+  }
+  .day-badge {
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .day-title { font-size: 18px; font-weight: 800; flex: 1; }
+  .day-theme { font-size: 12px; opacity: 0.75; }
+  .day-body {
+    background: white;
+    border-radius: 0 0 14px 14px;
+    border: 1px solid var(--gray-border);
+    border-top: none;
+    overflow: hidden;
+  }
+
+  /* ── SECTION GROUP ── */
+  .section-group { border-bottom: 1px solid var(--gray-border); }
+  .section-group:last-child { border-bottom: none; }
+  .section-label {
+    background: var(--gray-bg);
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--blue-mid);
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid var(--gray-border);
+  }
+
+  /* ── TIMELINE ITEM ── */
+  .item {
+    display: grid;
+    grid-template-columns: 70px 40px 1fr;
+    align-items: start;
+    padding: 14px 20px;
+    border-bottom: 1px solid #F0F4F8;
+    transition: background 0.15s;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: #FAFCFF; }
+  .item-time {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--blue-mid);
+    padding-top: 2px;
+    white-space: nowrap;
+  }
+  .item-icon { font-size: 20px; text-align: center; padding-top: 1px; }
+  .item-content {}
+  .item-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .item-detail { font-size: 13px; color: var(--text-sub); line-height: 1.55; margin-bottom: 4px; }
+  .item-cost {
+    display: inline-block;
+    background: var(--accent-light);
+    color: #A0620A;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-top: 4px;
+    margin-right: 6px;
+  }
+  .tip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-top: 4px;
+    margin-right: 6px;
+  }
+  .warn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #FFEBEE;
+    color: var(--red);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-top: 4px;
+  }
+
+  /* ── COST TABLE ── */
+  .cost-section { margin-top: 36px; }
+  .cost-section h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--blue-dark);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cost-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--gray-border); }
+  .cost-table thead { background: var(--blue-dark); color: white; }
+  .cost-table th { padding: 12px 18px; font-size: 13px; text-align: left; }
+  .cost-table th:last-child { text-align: right; }
+  .cost-table td { padding: 11px 18px; font-size: 14px; border-bottom: 1px solid #F0F4F8; }
+  .cost-table td:last-child { text-align: right; font-weight: 700; color: var(--blue-mid); }
+  .cost-table tr:last-child td { border-bottom: none; }
+  .cost-table tr:nth-child(even) td { background: var(--gray-bg); }
+  .cost-total { background: var(--blue-light) !important; }
+  .cost-total td { font-weight: 800 !important; color: var(--blue-dark) !important; font-size: 15px !important; border-top: 2px solid var(--blue-mid) !important; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: var(--text-sub);
+    border-top: 1px solid var(--gray-border);
+    background: white;
+    margin-top: 48px;
+  }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 22px; }
+    .info-grid { grid-template-columns: 1fr 1fr; }
+    .item { grid-template-columns: 58px 34px 1fr; padding: 12px 14px; }
+    .item-title { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-emoji">✈️</div>
+  <h1>서울 여행 플랜 2026</h1>
+  <div class="hero-sub">4월 26일(토) ~ 4월 28일(월) · Aloft 명동 호텔</div>
+  <div class="hero-chips">
+    <span class="chip">🍜 로컬 맛집</span>
+    <span class="chip">🛍️ 쇼핑</span>
+    <span class="chip">⛳ 스크린골프</span>
+    <span class="chip">🎤 KATSEYE</span>
+    <span class="chip">🌙 동대문 야시장</span>
+  </div>
+</div>
+
+<!-- QUICK INFO BAR -->
+<div class="info-bar">
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-label">🏨 숙소</div>
+      <div class="info-value">Aloft 명동 호텔</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">🛬 도착</div>
+      <div class="info-value">4/26(토) 새벽 04:00 인천</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">🛫 출발</div>
+      <div class="info-value">4/28(월) 오후 20:00 인천</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">🚌 공항버스</div>
+      <div class="info-value">6015번 · 약 17,000원</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ── DAY 1 ── -->
+  <div class="day-section">
+    <div class="day-header">
+      <span class="day-badge">DAY 1</span>
+      <span class="day-title">토요일 · 4월 26일</span>
+      <span class="day-theme">도착 · 설렁탕 · 찜질방 · 명동</span>
+    </div>
+    <div class="day-body">
+
+      <div class="section-group">
+        <div class="section-label">🌙 새벽 — 공항 도착 & 이동</div>
+        <div class="item">
+          <div class="item-time">04:00</div>
+          <div class="item-icon">🛬</div>
+          <div class="item-content">
+            <div class="item-title">인천공항 도착 & 입국수속</div>
+            <div class="item-detail">입국 수속 약 40분 소요 예상</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">04:50</div>
+          <div class="item-icon">☕</div>
+          <div class="item-content">
+            <div class="item-title">공항 편의점에서 대기</div>
+            <div class="item-detail">24시간 편의점에서 따뜻한 음료로 피로 달래기</div>
+            <span class="tip">💡 6015번 첫차까지 약 40분 대기</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">05:30</div>
+          <div class="item-icon">🚌</div>
+          <div class="item-content">
+            <div class="item-title">6015번 공항리무진 첫차 탑승</div>
+            <div class="item-detail">명동역·세종호텔 정류장 하차 / 약 70분 소요</div>
+            <span class="item-cost">💰 약 17,000원</span>
+            <span class="tip">💡 출발 전날 공항리무진 공식 앱에서 첫차 시간 재확인</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">07:20</div>
+          <div class="item-icon">🏨</div>
+          <div class="item-content">
+            <div class="item-title">Aloft 명동 호텔 도착 — 짐 맡기기</div>
+            <div class="item-detail">체크인 전 프런트에 짐 보관 요청 (무료)</div>
+            <span class="tip">💡 "짐 맡아주세요" 또는 "Luggage storage please"</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-label">🍲 아침 — 이문설렁탕 & 찜질방</div>
+        <div class="item">
+          <div class="item-time">08:00</div>
+          <div class="item-icon">🍲</div>
+          <div class="item-content">
+            <div class="item-title">이문설렁탕 — 아침 해장</div>
+            <div class="item-detail">1904년 전통 설렁탕 / 종로3가 (호텔에서 택시 10분)<br>뜨끈한 설렁탕 한 그릇으로 장거리 비행 피로 회복</div>
+            <span class="item-cost">💰 14,000원</span>
+            <span class="tip">💡 오전 8시 오픈, 현지인들이 아침부터 줄 서는 곳</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">09:30</div>
+          <div class="item-icon">🛁</div>
+          <div class="item-content">
+            <div class="item-title">스파렉스 동대문 — 찜질방</div>
+            <div class="item-detail">연중무휴 24시간 운영 / 이문설렁탕에서 택시 5분<br>사우나·수면실·식당 완비, 장거리 비행 피로 완전 회복</div>
+            <span class="item-cost">💰 약 12,000~15,000원</span>
+            <span class="tip">💡 수건·찜질복 제공, 귀중품은 락커 보관</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">13:30</div>
+          <div class="item-icon">🏨</div>
+          <div class="item-content">
+            <div class="item-title">호텔 복귀 & 체크인</div>
+            <div class="item-detail">택시로 명동 호텔 (약 10분) / 짐 찾고 체크인</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-label">🛍️ 오후 — 남대문시장 & 명동교자</div>
+        <div class="item">
+          <div class="item-time">15:00</div>
+          <div class="item-icon">🏪</div>
+          <div class="item-content">
+            <div class="item-title">남대문시장 먹거리 투어</div>
+            <div class="item-detail">호텔에서 도보 15분 또는 지하철 4호선 1정거장 (회현역)<br>씨앗호떡 1,500원 · 손만두 4,000원 · 어묵국물</div>
+            <span class="tip">💡 광장시장보다 로컬 분위기, 관광객 훨씬 적음</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">18:30</div>
+          <div class="item-icon">🍜</div>
+          <div class="item-content">
+            <div class="item-title">명동교자 — 저녁</div>
+            <div class="item-detail">호텔에서 도보 5분 / 미쉐린 빕 구르망 선정<br>칼국수 + 만두 조합 강추</div>
+            <span class="item-cost">💰 칼국수 12,000원</span>
+            <span class="warn">⚠️ 웨이팅 30분~1시간 예상, 오픈 시간에 맞춰 가기</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-label">🌃 야간 — 동대문 야시장</div>
+        <div class="item">
+          <div class="item-time">20:30</div>
+          <div class="item-icon">🌃</div>
+          <div class="item-content">
+            <div class="item-title">동대문 야시장</div>
+            <div class="item-detail">지하철 4호선 2정거장 (동대문역사문화공원역)<br>밤 10시~새벽 5시 운영 / 길거리음식·핸드메이드 굿즈</div>
+            <span class="tip">💡 입장 무료, 현금 챙기기</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">23:00</div>
+          <div class="item-icon">😴</div>
+          <div class="item-content">
+            <div class="item-title">호텔 복귀 & 취침</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DAY 2 ── -->
+  <div class="day-section">
+    <div class="day-header">
+      <span class="day-badge">DAY 2</span>
+      <span class="day-title">일요일 · 4월 27일</span>
+      <span class="day-theme">쇼핑 · 중국집 · HYBE · 을지로</span>
+    </div>
+    <div class="day-body">
+
+      <div class="section-group">
+        <div class="section-label">🍳 아침 — 호텔 조식</div>
+        <div class="item">
+          <div class="item-time">09:00</div>
+          <div class="item-icon">🍳</div>
+          <div class="item-content">
+            <div class="item-title">호텔 조식</div>
+            <div class="item-detail">Aloft 명동 호텔 레스토랑에서 여유롭게</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-label">🥡 점심 — 남강 중국집</div>
+        <div class="item">
+          <div class="item-time">12:30</div>
+          <div class="item-icon">🥡</div>
+          <div class="item-content">
+            <div class="item-title">남강 — 자장면 + 탕수육</div>
+            <div class="item-detail">호텔에서 도보 10분 / 을지로3가 오래된 로컬 중국집<br>옛날 스타일 바삭 탕수육, 두툼한 고기</div>
+            <span class="item-cost">💰 2인 세트 22,000원</span>
+            <span class="tip">💡 자장면 2그릇 + 탕수육 소자 세트 강추 / 영업 11:00~21:00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-label">🛒 오후 — 롯데마트 & HYBE Insight</div>
+        <div class="item">
+          <div class="item-time">14:30</div>
+          <div class="item-icon">🛒</div>
+          <div class="item-content">
+            <div class="item-title">롯데마트 서울역점</div>
+            <div class="item-detail">지하철 4호선 서울역 (명동에서 1정거장)<br>한국 과자·라면·김·화장품 등 쇼핑</div>
+            <span class="tip">💡 지하 1~2층 식품관 특히 추천</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">16:30</div>
+          <div class="item-icon">🎤</div>
+          <div class="item-content">
+            <div class="item-title">HYBE Insight — KATSEYE 굿즈</div>
+            <div class="item-detail">서울역에서 도보 15분 또는 지하철 1정거장 (용산역)<br>KATSEYE 라이트스틱 공식 구매</div>
+            <span class="tip">💡 방문 전 영업시간 공식 홈페이지 확인 권장</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-label">🥩 저녁 — 소고기 무한리필 & 을지로 커피</div>
+        <div class="item">
+          <div class="item-time">19:00</div>
+          <div class="item-icon">🥩</div>
+          <div class="item-content">
+            <div class="item-title">몽블리 명동점 — 소고기 무한리필</div>
+            <div class="item-detail">호텔에서 도보 3분! / 명동역 5번 출구<br>꽃등심·갈비살·부채살·우삼겹 등 다양한 부위 무제한<br>영업 11:30~새벽 2:00</div>
+            <span class="item-cost">💰 소고기+이베리코 29,700원</span>
+            <span class="item-cost">💰 곱창 추가 풀세트 32,700원</span>
+            <span class="warn">⚠️ 주말 저녁 웨이팅 있을 수 있음, 7시 이전 방문 추천</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">21:00</div>
+          <div class="item-icon">☕</div>
+          <div class="item-content">
+            <div class="item-title">을지로 골목 커피 산책</div>
+            <div class="item-detail">호텔에서 도보 15분 / 을지로 3~4가<br>오래된 인쇄소 골목 사이 힙한 카페·바가 공존<br>서울 로컬들이 요즘 즐겨 찾는 숨은 명소</div>
+            <span class="tip">💡 낮엔 공장골목, 밤엔 힙한 바 거리로 변신</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">23:00</div>
+          <div class="item-icon">😴</div>
+          <div class="item-content">
+            <div class="item-title">호텔 복귀</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── DAY 3 ── -->
+  <div class="day-section">
+    <div class="day-header">
+      <span class="day-badge">DAY 3</span>
+      <span class="day-title">월요일 · 4월 28일</span>
+      <span class="day-theme">스크린골프 · 냉면 · 귀국</span>
+    </div>
+    <div class="day-body">
+
+      <div class="section-group">
+        <div class="section-label">🍳 아침 — 호텔 조식</div>
+        <div class="item">
+          <div class="item-time">09:00</div>
+          <div class="item-icon">🍳</div>
+          <div class="item-content">
+            <div class="item-title">호텔 조식</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-label">⛳ 오전 — 스크린골프</div>
+        <div class="item">
+          <div class="item-time">10:00</div>
+          <div class="item-icon">⛳</div>
+          <div class="item-content">
+            <div class="item-title">스크린골프 (GOLFZON)</div>
+            <div class="item-detail">충무로·명동 근처 골프존 매장 / 1~2시간<br>그린 경사·바람까지 시뮬레이션, 한국 시설 최상급</div>
+            <span class="item-cost">💰 1인 시간당 약 15,000~25,000원</span>
+            <span class="tip">💡 김캐디 앱 또는 골프존 앱에서 근처 매장·영업시간 확인</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-label">🍜 점심 — 마지막 식사</div>
+        <div class="item">
+          <div class="item-time">12:00</div>
+          <div class="item-icon">🍜</div>
+          <div class="item-content">
+            <div class="item-title">오장동 함흥냉면 — 마지막 한 끼</div>
+            <div class="item-detail">을지로4가 / 매콤달콤한 함흥식 냉면, 쫄깃한 면발</div>
+            <span class="item-cost">💰 냉면 + 왕만두 약 20,000원</span>
+            <span class="tip">💡 회냉면 강추 (가자미회 고명) + 왕만두 必 추가</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-group">
+        <div class="section-label">✈️ 오후 — 체크아웃 & 귀국</div>
+        <div class="item">
+          <div class="item-time">14:00</div>
+          <div class="item-icon">🏨</div>
+          <div class="item-content">
+            <div class="item-title">호텔 체크아웃</div>
+            <div class="item-detail">짐 챙기기 / 귀국 선물 마지막 점검</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">17:00</div>
+          <div class="item-icon">🚌</div>
+          <div class="item-content">
+            <div class="item-title">6015번 공항리무진 탑승</div>
+            <div class="item-detail">명동역·세종호텔 정류장 / 인천공항까지 약 70분</div>
+            <span class="item-cost">💰 약 17,000원</span>
+            <span class="warn">⚠️ 오후 8시 비행기 기준 17:00 출발 권장</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">18:10</div>
+          <div class="item-icon">🏁</div>
+          <div class="item-content">
+            <div class="item-title">인천공항 도착 & 탑승 수속</div>
+            <div class="item-detail">탑승 2시간 전 도착 / 수하물 2개 위탁</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-time">20:00</div>
+          <div class="item-icon">🛫</div>
+          <div class="item-content">
+            <div class="item-title">비행기 탑승 — 귀국!</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── COST TABLE ── -->
+  <div class="cost-section">
+    <h2>💰 예상 비용 요약</h2>
+    <table class="cost-table">
+      <thead>
+        <tr><th>항목</th><th>예상 금액</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>공항버스 왕복 (6015번)</td><td>약 34,000원</td></tr>
+        <tr><td>이문설렁탕 (아침)</td><td>14,000원</td></tr>
+        <tr><td>스파렉스 찜질방</td><td>12,000~15,000원</td></tr>
+        <tr><td>남대문시장 길거리음식</td><td>10,000원 내외</td></tr>
+        <tr><td>명동교자 (저녁)</td><td>약 15,000원</td></tr>
+        <tr><td>남강 자장면+탕수육 2인 세트</td><td>22,000원</td></tr>
+        <tr><td>몽블리 소고기 무한리필</td><td>29,700~32,700원</td></tr>
+        <tr><td>스크린골프 (1시간)</td><td>15,000~25,000원</td></tr>
+        <tr><td>오장동 함흥냉면 + 왕만두</td><td>약 20,000원</td></tr>
+        <tr><td>KATSEYE 라이트스틱</td><td>공식가 별도 확인</td></tr>
+        <tr><td>롯데마트 쇼핑</td><td>자유</td></tr>
+        <tr><td>기타 교통 (택시·지하철)</td><td>약 20,000원 내외</td></tr>
+        <tr class="cost-total"><td>🧾 식비+교통 합계 (쇼핑 제외)</td><td>약 191,700~208,700원</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  ※ 가격은 2026년 4월 기준 예상가이며 실제와 다를 수 있습니다.<br>
+  ※ 찜질방·마트·굿즈 매장 영업시간은 방문 전 재확인을 권장합니다.
+</footer>
+
+</body>
+</html>
